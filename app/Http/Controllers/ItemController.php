@@ -27,9 +27,16 @@ class ItemController extends Controller
 
         // dd($lostItem->date_lost->addDays(25));
 
+        // $potentialFoundItems = FoundItem::where('category_id', $lostItem->category_id)
+        // ->whereDate('date_found', '>=', $lostItem->date_lost) // Matches within 7 days before
+        // ->whereDate('date_found', '<=', $lostItem->date_lost->addDays(30)) // Matches within 7 days after
+        // ->get();
+
         $potentialFoundItems = FoundItem::where('category_id', $lostItem->category_id)
-        ->whereDate('date_found', '>=', $lostItem->date_lost) // Matches within 7 days before
-        ->whereDate('date_found', '<=', $lostItem->date_lost->addDays(30)) // Matches within 7 days after
+        ->whereBetween('date_found', [
+            $lostItem->date_lost->subDays(60), // Check up to 60 days *before*
+            $lostItem->date_lost->addDays(60)  // Check up to 60 days *after*
+        ])
         ->get();
 
         $matchedFoundItems = $potentialFoundItems->filter(function ($foundItem) use ($lostItem) {
@@ -43,7 +50,7 @@ class ItemController extends Controller
                 similar_text($lostItem->location, $foundItem->location, $locationSimilarity);
 
                 // Define similarity thresholds
-                return $nameSimilarity >= 60 && $locationSimilarity >= 60;
+                return $nameSimilarity >= 50 && $locationSimilarity >= 50;
             });
 
 

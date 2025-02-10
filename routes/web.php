@@ -38,7 +38,7 @@ Route::middleware(['auth','normalUser','suspend'])->group(function (){
     // Route::get('/route-to-chatify', [NotificationController::class, "routeToChatify"]);
 
 
-     
+    
 });
 
 Route::middleware(['auth','admin'])->group(function (){ 
@@ -49,6 +49,14 @@ Route::middleware(['auth','admin'])->group(function (){
     Route::post('/admin/suspend-user/{user}', [AdminController::class, "suspendUser"])->middleware('verified');
     Route::post('/admin/activate-user/{user}', [AdminController::class, "activateUser"])->middleware('verified');
     Route::post('/admin-approve/{lostItem}/{foundItem}', [AdminController::class, "approveReview"])->middleware('verified');
+
+    Route::post('/admin-reject/{lostItem}/{foundItem}', [AdminController::class, "rejectReview"])->middleware('verified');
+
+    Route::get('/admin-dashboard-location-management', [AdminController::class, "showLocation"])->middleware('verified');
+
+    Route::get('/admin-dashboard-category-management', [AdminController::class, "showCategory"])->middleware('verified');
+
+
 
 });
 

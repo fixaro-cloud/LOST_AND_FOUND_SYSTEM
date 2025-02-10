@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\DatabaseMessage;
 
-class ReviewApprovedNotification extends Notification
+class ReviewRejectedNotification extends Notification
 {
     // use Queueable;
     // i don't use queue because of error 
@@ -17,12 +17,14 @@ class ReviewApprovedNotification extends Notification
     protected $founder;
     protected $status;
 
+
     public function __construct($review, $claimer, $founder, $status)
     {
         $this->review = $review;
         $this->claimer = $claimer;
         $this->founder = $founder;
         $this->status = $status;
+        
     }
 
     public function via($notifiable)
@@ -36,8 +38,8 @@ class ReviewApprovedNotification extends Notification
 
     return [
         'message' => $recipientType === 'loser' 
-            ? "Your lost item review has been approved!  You can contact the founder now." 
-            : "Your found item review has been approved!  The loser can now claim the item.",
+            ? "Unfortunately, your lost item review has been rejected. Please ensure your information is accurate before reapplying." 
+            : "",
         'review_id' => $this->review->id,
         'claimer_id' => $this->claimer->id,
         'founder_name' => $this->founder->name,
@@ -46,7 +48,6 @@ class ReviewApprovedNotification extends Notification
         'item_name' => $this->review->lost_item_name,
         'recipient_type' => $recipientType, // 'loser' or 'founder'
         'status' => $this->status 
-
     ];
     }
 
